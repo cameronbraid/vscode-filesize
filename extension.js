@@ -18,7 +18,8 @@ function updateConfig() {
     showGzipInStatusBar: configuration.get('showGzipInStatusBar'),
     displayInfoOnTheRightSideOfStatusBar: configuration.get('displayInfoOnTheRightSideOfStatusBar'),
     showBrotli: configuration.get('showBrotli'),
-    showGzipInStatusBar: configuration.get('showGzipInStatusBar')
+    showGzipInStatusBar: configuration.get('showGzipInStatusBar'),
+    showBrotliInStatusBar: configuration.get('showBrotliInStatusBar')
   };
   updateStatusBarItem();
   return config;
@@ -28,10 +29,16 @@ function showStatusBarItem(newInfo) {
   info = fzCalculator.addPrettySize(newInfo, config);
   if (info && info.prettySize) {
     statusBarItem.text = info.prettySize;
-    if (config.showGzipInStatusBar) {
+    if (config.showGzipInStatusBar || config.showBrotliInStatusBar) {
       statusBarItem.text = `Raw: ${info.prettySize}`;
-      info = fzCalculator.addGzipSize(info, config);
-      statusBarItem.text += ` | Gzip: ${info.gzipSize}`
+      if (config.showGzipInStatusBar) {
+        info = fzCalculator.addGzipSize(info, config);
+        statusBarItem.text += ` | Gzip: ${info.gzipSize}`
+      }
+      if (config.showBrotliInStatusBar) {
+        info = fzCalculator.addBrotliSize(info, config);
+        statusBarItem.text += ` | Brotli: ${info.brotliSize}`
+      }
     }
     statusBarItem.show();
   }
